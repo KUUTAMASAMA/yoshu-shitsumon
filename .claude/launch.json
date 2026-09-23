@@ -1,0 +1,12 @@
+﻿{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "yoshu-shitsumon",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8791", "--directory", "C:/Users/user/dev/yoshu-shitsumon"],
+      "port": 8791
+    }
+  ]
+}
+

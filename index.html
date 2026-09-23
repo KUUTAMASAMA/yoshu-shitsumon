@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>勉強の質問コーナー</title>
+<meta name="description" content="はい・いいえで答える42問（約10分）">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --card: #ffffff;
+    --text: #1f2328;
+    --sub: #6b7076;
+    --line: #e4e0d8;
+    --accent: #2f6f5e;
+    --accent-soft: #e3efe9;
+    --yes: #2f6f5e;
+    --no: #9a4a3c;
+    --line-green: #06c755;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17191c;
+      --card: #22252a;
+      --text: #eceae6;
+      --sub: #a3a7ad;
+      --line: #34383e;
+      --accent: #6fbfa6;
+      --accent-soft: #24352f;
+      --yes: #5aaf94;
+      --no: #d27a69;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+  h1 { font-size: 1.5rem; margin: 24px 0 8px; }
+  p { margin: 0 0 12px; }
+  .sub { color: var(--sub); font-size: .92rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  ul.points { padding-left: 1.2em; margin: 8px 0 0; }
+  ul.points li { margin-bottom: 4px; }
+  button {
+    font: inherit;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--sub);
+    font-weight: 500;
+    border: 1px solid var(--line);
+  }
+  .btn.line { background: var(--line-green); }
+  .btn:active { transform: scale(.98); }
+  .spacer { flex: 1; }
+  .stack > * + * { margin-top: 12px; }
+
+  /* 質問画面 */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: .85rem;
+    color: var(--sub);
+  }
+  .back {
+    background: transparent;
+    color: var(--sub);
+    padding: 8px 4px;
+    font-size: .9rem;
+  }
+  .back:disabled { visibility: hidden; }
+  .bar {
+    height: 8px;
+    background: var(--line);
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 8px 0 28px;
+  }
+  .bar > div {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width .25s ease;
+  }
+  .section {
+    display: inline-block;
+    align-self: flex-start;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: .85rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+  }
+  .qno { color: var(--sub); font-size: .9rem; }
+  .qtext {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 4px 0 8px;
+    min-height: 4.2em;
+  }
+  .hint { color: var(--sub); font-size: .88rem; min-height: 1.4em; }
+  .answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .ans {
+    padding: 26px 8px;
+    border-radius: 18px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: var(--card);
+    border: 2px solid var(--line);
+    color: var(--text);
+    transition: background .15s, border-color .15s;
+  }
+  .ans.yes.chosen { background: var(--yes); border-color: var(--yes); color: #fff; }
+  .ans.no.chosen { background: var(--no); border-color: var(--no); color: #fff; }
+
+  /* 最後の画面 */
+  textarea {
+    width: 100%;
+    min-height: 96px;
+    font: inherit;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--text);
+    resize: vertical;
+  }
+  label { font-weight: 700; display: block; margin-bottom: 6px; }
+  input[type=text] {
+    width: 100%;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--text);
+  }
+  pre.result {
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    font-family: inherit;
+    font-size: .88rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 0;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 18px;
+    border-radius: 99px;
+    font-size: .9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- はじめの画面 -->
+  <section class="screen active" id="s-start">
+    <h1>勉強の質問コーナー</h1>
+    <p class="sub">あなたに合った勉強のしかけを作るための質問です。</p>
+    <div class="card">
+      <ul class="points">
+        <li>全部で <b>42問</b>、だいたい <b>10分</b></li>
+        <li>「はい」か「いいえ」をタップするだけ</li>
+        <li>深く考えず、パッと思ったほうでOK</li>
+        <li>正解・不正解はありません</li>
+      </ul>
+    </div>
+    <div class="spacer"></div>
+    <div class="stack">
+      <button class="btn" id="btn-start">はじめる</button>
+      <button class="btn ghost" id="btn-resume" hidden>続きから再開する</button>
+    </div>
+  </section>
+
+  <!-- 質問画面 -->
+  <section class="screen" id="s-q">
+    <div class="top">
+      <button class="back" id="btn-back">‹ もどる</button>
+      <span id="count">1 / 42</span>
+    </div>
+    <div class="bar"><div id="bar"></div></div>
+    <span class="section" id="section"></span>
+    <div class="qno" id="qno"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="hint" id="hint"></div>
+    <div class="spacer"></div>
+    <div class="answers">
+      <button class="ans yes" data-a="1">はい</button>
+      <button class="ans no" data-a="0">いいえ</button>
+    </div>
+  </section>
+
+  <!-- 最後の画面 -->
+  <section class="screen" id="s-end">
+    <h1>おつかれさま！</h1>
+    <p class="sub">最後に2つだけ（書かなくてもOK）。</p>
+    <div class="stack">
+      <div>
+        <label for="nick">ニックネーム</label>
+        <input type="text" id="nick" placeholder="例：たろう" maxlength="20">
+      </div>
+      <div>
+        <label for="free">いちばん困っていることを、ひとことで言うと？</label>
+        <textarea id="free" maxlength="300" placeholder="例：英語の予習で単語を調べるだけで1時間かかる"></textarea>
+      </div>
+    </div>
+    <div style="margin-top:20px" class="stack">
+      <button class="btn line" id="btn-line">LINEで送る</button>
+      <button class="btn ghost" id="btn-copy">結果をコピーする</button>
+    </div>
+    <p class="sub" style="margin-top:16px">送る内容</p>
+    <pre class="result" id="result"></pre>
+    <div style="margin-top:16px" class="stack">
+      <button class="btn ghost" id="btn-review">答えを見直す</button>
+    </div>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SECTIONS = [
+  { id: "A", name: "予習について", qs: [
+    ["予習は毎日ある？"],
+    ["予習に1日1時間以上かかっている？"],
+    ["予習が終わらないまま授業に出ることがよくある？"],
+    ["教科書を読んでも、何が書いてあるか分からないことが多い？"],
+    ["分からないところを、どう調べればいいか分からない？"],
+    ["予習でいちばん時間がかかるのは「単語や用語を調べること」？"],
+    ["予習ノートに何を書けばいいか、決まっている？"],
+    ["授業中に当てられたり、発表したりすることがある？"],
+  ]},
+  { id: "B", name: "困っている教科", qs: [
+    ["英語で困っている？"],
+    ["数学で困っている？"],
+    ["国語（現代文）で困っている？"],
+    ["古文・漢文で困っている？"],
+    ["理科で困っている？"],
+    ["社会で困っている？"],
+  ]},
+  { id: "C", name: "時間と生活", qs: [
+    ["部活に入っている？"],
+    ["平日、家に着くのは夜7時より遅い？"],
+    ["電車やバスで、スマホを見られる時間がある？"],
+    ["寝るのが夜12時を過ぎることが多い？"],
+    ["勉強する時間帯はだいたい決まっている？"],
+    ["週末にまとめて勉強する時間がとれる？"],
+  ]},
+  { id: "D", name: "スマホ・AI", qs: [
+    ["自分のスマホを勉強に使ってもいい？"],
+    ["スマホは iPhone？", "Android なら「いいえ」"],
+    ["ChatGPT や Claude などのAIを使ったことがある？"],
+    ["学校から「AIを使ってはいけない」と言われている？"],
+    ["教科書やノートをスマホで撮るのは平気？"],
+    ["タブレットやパソコンも使える？"],
+    ["勉強アプリ（スタディサプリなど）をもう使っている？"],
+  ]},
+  { id: "E", name: "勉強のくせ", qs: [
+    ["文字より、図や音声のほうが頭に入りやすい？"],
+    ["5〜10分くらいなら集中できる？"],
+    ["人に説明したり聞いたりするほうが覚えやすい？"],
+    ["お知らせ（通知）が来ると続けやすい？"],
+    ["続けた日数やグラフが見えると、やる気が出る？"],
+    ["中学の内容で、あやふやなところがある？"],
+    ["授業のあとの復習までは手が回っていない？"],
+    ["小テストや定期テストの点数が心配？"],
+  ]},
+  { id: "F", name: "どんなものがほしい？", qs: [
+    ["教科書の写真を撮るだけで、ポイントを教えてくれるものがほしい？"],
+    ["答えを教えてもらうより、「ヒント」を出して一緒に考えてほしい？"],
+    ["英単語や用語をクイズで覚えられるものがほしい？"],
+    ["「今日やること」を順番に並べてくれる表がほしい？"],
+    ["授業前の5分で見返せる「まとめカード」がほしい？"],
+    ["進み具合を、親や相談相手に見てもらってもいい？"],
+    ["月に数百円〜千円くらいのお金がかかってもいい？"],
+  ]},
+];
+
+// 全問を1列に並べる（通し番号つき）
+const QUESTIONS = [];
+SECTIONS.forEach(s => s.qs.forEach(q => {
+  QUESTIONS.push({ no: QUESTIONS.length + 1, sec: s, text: q[0], hint: q[1] || "" });
+}));
+const TOTAL = QUESTIONS.length;
+const STORE_KEY = "yoshu-shitsumon-v1";
+
+let answers = new Array(TOTAL).fill(null);
+let idx = 0;
+
+const $ = id => document.getElementById(id);
+
+function save() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      answers, idx, nick: $("nick").value, free: $("free").value
+    }));
+  } catch (e) {}
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+    if (d && Array.isArray(d.answers) && d.answers.length === TOTAL) return d;
+  } catch (e) {}
+  return null;
+}
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(el => el.classList.toggle("active", el.id === id));
+  window.scrollTo(0, 0);
+}
+
+function renderQ() {
+  const q = QUESTIONS[idx];
+  $("count").textContent = `${idx + 1} / ${TOTAL}`;
+  $("bar").style.width = `${(idx / TOTAL) * 100}%`;
+  $("section").textContent = `${q.sec.id}. ${q.sec.name}`;
+  $("qno").textContent = `質問 ${q.no}`;
+  $("qtext").textContent = q.text;
+  $("hint").textContent = q.hint;
+  $("btn-back").disabled = idx === 0;
+  document.querySelectorAll(".ans").forEach(b => {
+    b.classList.toggle("chosen", answers[idx] !== null && String(answers[idx]) === b.dataset.a);
+  });
+}
+
+let busy = false;
+function answer(val) {
+  if (busy) return;
+  busy = true;
+  answers[idx] = val;
+  renderQ();
+  save();
+  setTimeout(() => {
+    busy = false;
+    if (idx < TOTAL - 1) {
+      idx++;
+      renderQ();
+    } else {
+      const firstBlank = answers.indexOf(null);
+      if (firstBlank >= 0) { idx = firstBlank; renderQ(); showToast("まだ答えていない質問があります"); }
+      else toEnd();
+    }
+    save();
+  }, 180);
+}
+
+function buildResult() {
+  const lines = [];
+  const nick = $("nick").value.trim();
+  lines.push("【勉強の質問コーナー 回答】");
+  if (nick) lines.push(`名前：${nick}`);
+  lines.push("○＝はい ×＝いいえ");
+  SECTIONS.forEach(s => {
+    const parts = QUESTIONS.filter(q => q.sec === s)
+      .map(q => `${q.no}${answers[q.no - 1] === 1 ? "○" : answers[q.no - 1] === 0 ? "×" : "－"}`);
+    lines.push(`${s.id}.${s.name}：${parts.join(" ")}`);
+  });
+  const free = $("free").value.trim();
+  lines.push(`困っていること：${free || "（なし）"}`);
+  return lines.join("\n");
+}
+
+function updateResult() {
+  $("result").textContent = buildResult();
+}
+
+function toEnd() {
+  $("bar").style.width = "100%";
+  updateResult();
+  show("s-end");
+}
+
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e2) {}
+    ta.remove();
+    return ok;
+  }
+}
+
+// ---- イベント ----
+$("btn-start").addEventListener("click", () => {
+  answers = new Array(TOTAL).fill(null);
+  idx = 0;
+  $("nick").value = "";
+  $("free").value = "";
+  save();
+  renderQ();
+  show("s-q");
+});
+$("btn-resume").addEventListener("click", () => {
+  if (answers.every(a => a !== null)) { toEnd(); return; }
+  renderQ();
+  show("s-q");
+});
+$("btn-back").addEventListener("click", () => {
+  if (idx > 0) { idx--; renderQ(); save(); }
+});
+document.querySelectorAll(".ans").forEach(b => {
+  b.addEventListener("click", () => answer(Number(b.dataset.a)));
+});
+["nick", "free"].forEach(id => $(id).addEventListener("input", () => { updateResult(); save(); }));
+
+$("btn-line").addEventListener("click", async () => {
+  const text = buildResult();
+  await copyText(text); // うまく開けなかったときのために、念のためコピーもしておく
+  location.href = "https://line.me/R/share?text=" + encodeURIComponent(text);
+});
+$("btn-copy").addEventListener("click", async () => {
+  const ok = await copyText(buildResult());
+  showToast(ok ? "コピーしました。LINEに貼りつけて送ってね" : "コピーできませんでした。下の文を長押ししてコピーしてね");
+});
+$("btn-review").addEventListener("click", () => {
+  idx = 0;
+  renderQ();
+  show("s-q");
+});
+
+// ---- 起動時：途中の回答があれば再開ボタンを出す ----
+const saved = load();
+if (saved && saved.answers.some(a => a !== null)) {
+  answers = saved.answers;
+  idx = Math.min(Math.max(0, saved.idx | 0), TOTAL - 1);
+  $("nick").value = saved.nick || "";
+  $("free").value = saved.free || "";
+  $("btn-resume").hidden = false;
+  $("btn-start").textContent = "最初からはじめる";
+}
+</script>
+</body>
+</html>
