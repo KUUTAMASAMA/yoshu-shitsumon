@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2f6f5e">
+<title>予習と暗記の作戦</title>
+<meta name="description" content="質問コーナーの回答から考えた、予習をラクにして覚えたことを忘れない作戦（高2・受験も見すえて）">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --card: #ffffff;
+    --text: #1f2328;
+    --sub: #62676d;
+    --line: #e4e0d8;
+    --accent: #2f6f5e;
+    --on-accent: #ffffff;
+    --accent-soft: #e3efe9;
+    --warm: #c0643c;
+    --warm-soft: #f8e8df;
+    --chat-ai: #eef2f6;
+    --line-green: #06c755;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17191c;
+      --card: #22252a;
+      --text: #eceae6;
+      --sub: #a3a7ad;
+      --line: #34383e;
+      --accent: #6fbfa6;
+      --on-accent: #0f2420;
+      --accent-soft: #24352f;
+      --warm: #e38c64;
+      --warm-soft: #3a2a22;
+      --chat-ai: #2a2f36;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    line-height: 1.75;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 24px 16px calc(40px + env(safe-area-inset-bottom)); }
+  h1 { font-size: 1.55rem; line-height: 1.45; margin: 16px 0 12px; }
+  h2 { font-size: 1.2rem; margin: 44px 0 12px; display: flex; align-items: center; gap: 8px; }
+  h2 .num {
+    display: inline-grid; place-items: center; flex: none;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: var(--on-accent); font-size: .9rem;
+  }
+  h3 { font-size: 1rem; margin: 0 0 4px; }
+  p { margin: 0 0 12px; }
+  .sub { color: var(--sub); font-size: .92rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+  .stack > * + * { margin-top: 12px; }
+  .tag {
+    display: inline-block; background: var(--accent-soft); color: var(--accent);
+    font-size: .8rem; font-weight: 700; padding: 2px 10px; border-radius: 99px;
+  }
+  .tag.warm { background: var(--warm-soft); color: var(--warm); }
+  a { color: var(--accent); }
+
+  /* 今→目標 */
+  .bars { display: grid; gap: 14px; margin-top: 8px; }
+  .bar-row .label { display: flex; justify-content: space-between; font-size: .9rem; font-weight: 700; }
+  .bar { height: 18px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .bar > div { height: 100%; border-radius: 99px; }
+  .bar .now { width: 100%; background: var(--warm); }
+  .bar .goal { width: 50%; background: var(--accent); }
+
+  /* 場面 */
+  .scene { display: flex; gap: 14px; align-items: flex-start; }
+  .scene + .scene { margin-top: 16px; }
+  .scene .icon {
+    flex: none; width: 48px; height: 48px; border-radius: 14px;
+    background: var(--accent-soft); display: grid; place-items: center; font-size: 1.5rem;
+  }
+  .scene .time { color: var(--accent); font-weight: 700; font-size: .85rem; }
+
+  /* 今日やることリスト（イメージ） */
+  .todo { border: 1px dashed var(--line); border-radius: 14px; padding: 12px 14px; background: var(--bg); }
+  .todo .row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .92rem; }
+  .todo .row + .row { border-top: 1px solid var(--line); }
+  .todo .box { width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 5px; flex: none; }
+  .todo .row b { margin-left: auto; color: var(--accent); white-space: nowrap; }
+
+  /* 復習のタイミング */
+  .timeline { display: flex; align-items: flex-start; margin: 14px 0 6px; }
+  .timeline .pt { flex: 1; text-align: center; position: relative; font-size: .78rem; }
+  .timeline .pt::before {
+    content: ""; position: absolute; top: 11px; left: -50%; width: 100%;
+    border-top: 2px dashed var(--line); z-index: 0;
+  }
+  .timeline .pt:first-child::before { display: none; }
+  .timeline .dot {
+    position: relative; z-index: 1; margin: 0 auto 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: var(--on-accent);
+    display: grid; place-items: center; font-size: .7rem; font-weight: 700;
+  }
+  .timeline .pt:first-child .dot { background: var(--warm); }
+  .timeline .pt span { display: block; line-height: 1.35; }
+
+  /* チャット例 */
+  .chat { display: grid; gap: 10px; }
+  .bubble { padding: 12px 14px; border-radius: 16px; font-size: .9rem; max-width: 94%; }
+  .bubble.me { background: var(--accent); color: var(--on-accent); justify-self: end; border-bottom-right-radius: 4px; }
+  .bubble.ai { background: var(--chat-ai); justify-self: start; border-bottom-left-radius: 4px; }
+  .bubble .who { font-size: .75rem; opacity: .75; display: block; margin-bottom: 2px; }
+  .flow3 { display: grid; gap: 4px; margin-top: 4px; }
+  .flow3 div { background: var(--card); border-radius: 10px; padding: 6px 10px; }
+  .flow3 small { color: var(--warm); font-weight: 700; margin-right: 6px; }
+
+  /* 覚え方 */
+  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ways .w { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  .ways .w b { display: block; font-size: .95rem; }
+  .ways .w span { font-size: .82rem; color: var(--sub); }
+
+  /* 受験までの見通し */
+  .road { position: relative; padding-left: 22px; }
+  .road::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; border-left: 2px solid var(--line); }
+  .road .st { position: relative; }
+  .road .st + .st { margin-top: 14px; }
+  .road .st::before {
+    content: ""; position: absolute; left: -21px; top: 7px;
+    width: 12px; height: 12px; border-radius: 50%; background: var(--line);
+  }
+  .road .st.now::before { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .road .when { font-size: .8rem; font-weight: 700; color: var(--sub); }
+  .road .st.now .when { color: var(--accent); }
+
+  /* AIツール */
+  .tool ul { margin: 8px 0 0; padding-left: 1.2em; }
+  .tool li { margin-bottom: 2px; }
+  .tool.rec { border: 2px solid var(--accent); }
+
+  ol.steps { padding-left: 1.3em; margin: 0; }
+  ol.steps li { margin-bottom: 8px; }
+
+  pre.prompt {
+    white-space: pre-wrap; overflow-wrap: anywhere;
+    font-family: inherit; font-size: .86rem;
+    background: var(--bg); border: 1px dashed var(--line);
+    border-radius: 12px; padding: 12px; margin: 0 0 12px;
+  }
+
+  button { font: inherit; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .btn {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 14px; border-radius: 14px; font-size: 1rem; font-weight: 700;
+    background: var(--accent); color: var(--on-accent);
+  }
+  .btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+  .btn.line { background: var(--line-green); color: #fff; }
+  .btn:active { transform: scale(.98); }
+
+  /* 選択 */
+  .q { margin-top: 16px; }
+  .q > b { display: block; margin-bottom: 6px; }
+  .q > small { display: block; color: var(--sub); margin: -4px 0 6px; font-size: .82rem; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt {
+    padding: 8px 14px; border-radius: 99px; font-size: .92rem; font-weight: 600;
+    background: var(--card); color: var(--text); border: 1.5px solid var(--line);
+  }
+  .opt.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; text-align: left;
+    background: var(--card); color: var(--text); border: 2px solid var(--line);
+  }
+  .choice.on { border-color: var(--accent); background: var(--accent-soft); }
+  textarea {
+    width: 100%; min-height: 80px; font: inherit; font-size: 16px; padding: 10px;
+    border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  }
+  .rules li { margin-bottom: 8px; }
+  footer { margin-top: 40px; text-align: center; color: var(--sub); font-size: .85rem; }
+  .toast {
+    position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 99px;
+    font-size: .9rem; opacity: 0; pointer-events: none; transition: opacity .2s; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="tag">質問コーナーの結果</span>
+  <h1>予習をラクにして、<br>覚えたことを「忘れない」作戦</h1>
+  <p>42問、答えてくれてありがとう！<br>答えを全部読んで、あなたに合いそうなやり方を考えました。受験のことも少し入れてあります。5分で読めます。</p>
+
+  <!-- 1 -->
+  <h2><span class="num">1</span>答えから分かったこと</h2>
+  <div class="stack">
+    <div class="card">
+      <span class="tag warm">いちばんの問題</span>
+      <h3 style="margin-top:8px">時間が足りない ＋ 覚えたことが残らない</h3>
+      <p class="sub" style="margin:0">予習に毎日1時間以上かかって、復習までは手が回らない。部活があって帰りは7時すぎ、寝るのは12時すぎ。これでは覚えたことが残らないのは当然です。</p>
+    </div>
+    <div class="card">
+      <span class="tag warm">日本史の語句が覚えられない</span>
+      <h3 style="margin-top:8px">それは「覚え方」の問題。あなたのせいじゃない</h3>
+      <p class="sub" style="margin:0">語句を1つずつ丸暗記しようとすると、だれでも忘れます。<b>「流れ」でつなげる</b>ことと、<b>忘れかけたころにもう一度見る</b>ことで、ぐっと残りやすくなります。</p>
+    </div>
+    <div class="card">
+      <span class="tag">あなたの強み</span>
+      <h3 style="margin-top:8px">短い時間なら集中できる／図や音声で覚えやすい／人に説明すると覚える</h3>
+      <p class="sub" style="margin:0">記録が見えるとやる気が出るのもいいところ。この強みを使う作戦にしました。</p>
+    </div>
+    <div class="card">
+      <span class="tag">ひとつだけ</span>
+      <p class="sub" style="margin:8px 0 0">ほとんどの質問に「はい」だったね。それだけがんばろうとしている証拠です。でも、全部いっぺんにやると続かないので、<b>まずは困っている教科から少しずつ</b>いこう。</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <h2><span class="num">2</span>目標は2つ</h2>
+  <div class="card">
+    <h3>① 予習を 1時間以上 → 30分に</h3>
+    <div class="bars">
+      <div class="bar-row">
+        <div class="label"><span>今</span><span>1時間以上</span></div>
+        <div class="bar"><div class="now"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="label"><span>目標</span><span>30分</span></div>
+        <div class="bar"><div class="goal"></div></div>
+      </div>
+    </div>
+    <h3 style="margin-top:18px">② 覚えたことを、テストまで忘れない</h3>
+    <p class="sub" style="margin:0">浮いた時間を「復習」と「睡眠」に回そう。寝ている間に記憶は整理されるから、早く寝るのも立派な勉強です。</p>
+  </div>
+
+  <!-- 3 -->
+  <h2><span class="num">3</span>毎日のやり方</h2>
+  <div class="card">
+    <div class="scene">
+      <div class="icon">🏠</div>
+      <div>
+        <div class="time">家で・1教科10分</div>
+        <h3>教科書をAIに送って、下調べしてもらう</h3>
+        <p class="sub" style="margin:0">調べものはAIの担当。大事な語句はそのまま「カード」になるよ。</p>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="icon">🚃</div>
+      <div>
+        <div class="time">電車で・5〜10分</div>
+        <h3>復習クイズ（音声でも聞ける）</h3>
+        <p class="sub" style="margin:0">スマホが語句を読み上げてくれるから、目がつかれていても耳で復習できる。</p>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="icon">⏰</div>
+      <div>
+        <div class="time">授業前・5分</div>
+        <h3>まとめを見返す</h3>
+        <p class="sub" style="margin:0">当てられても落ち着いて答えられる。</p>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="icon">📅</div>
+      <div>
+        <div class="time">週末・30分</div>
+        <h3>先生役になって説明する</h3>
+        <p class="sub" style="margin:0">習ったことをAIに説明して、まちがいを見つけてもらう。人に説明するのが、いちばん覚える方法。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>迷わないように「今日やること」を1画面で</h3>
+    <p class="sub">アプリを開くと、今日やることがこんなふうに出るようにするよ（イメージ）。</p>
+    <div class="todo" aria-label="今日やることリストのイメージ">
+      <div class="row"><span class="box"></span>予習：英語</div>
+      <div class="row"><span class="box"></span>予習：日本史</div>
+      <div class="row"><span class="box"></span>復習クイズ<b>25枚・約5分</b></div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <h2><span class="num">4</span>日本史の語句を忘れない方法</h2>
+  <div class="card">
+    <h3>忘れかけたころに、もう一度出てくる</h3>
+    <p class="sub" style="margin:0">覚えた語句は、アプリが自動でこのタイミングにクイズに出すよ。</p>
+    <div class="timeline" aria-label="復習のタイミング：今日、1日後、3日後、1週間後、2週間後">
+      <div class="pt"><div class="dot">覚</div><span>今日</span></div>
+      <div class="pt"><div class="dot">1</div><span>1日後</span></div>
+      <div class="pt"><div class="dot">2</div><span>3日後</span></div>
+      <div class="pt"><div class="dot">3</div><span>1週間後</span></div>
+      <div class="pt"><div class="dot">4</div><span>2週間後</span></div>
+    </div>
+    <p class="sub" style="margin:8px 0 0">1回で覚えようとしなくていい。<b>間をあけて何回か見る</b>ほうが、少ない時間で長く覚えていられるよ。</p>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>AIを使った4つの覚え方</h3>
+    <div class="ways" style="margin-top:10px">
+      <div class="w"><b>📖 流れで覚える</b><span>原因→出来事→結果のストーリーにしてもらう</span></div>
+      <div class="w"><b>🎵 語呂合わせ</b><span>覚えにくい年号の語呂を作ってもらう</span></div>
+      <div class="w"><b>❓ 一問一答</b><span>教科書のページから問題を作ってもらう</span></div>
+      <div class="w"><b>🧑‍🏫 先生役</b><span>自分の言葉で説明して、直してもらう</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>たとえば「承久の乱」なら</h3>
+    <div class="chat" style="margin-top:10px">
+      <div class="bubble me">承久の乱を「原因→出来事→結果」で教えて</div>
+      <div class="bubble ai">
+        <span class="who">AI</span>
+        <div class="flow3">
+          <div><small>原因</small>後鳥羽上皇が、幕府を倒して朝廷の力を取りもどそうとした</div>
+          <div><small>出来事</small>1221年、上皇が兵をあげたが、幕府軍が勝った</div>
+          <div><small>結果</small>幕府は京都に六波羅探題を置いて朝廷を見張り、力が西国にも広がった</div>
+        </div>
+        <p style="margin:8px 0 0">年号の語呂：<b>ひとにふい（1221）うち、承久の乱</b></p>
+      </div>
+    </div>
+    <p class="sub" style="margin:10px 0 0">※ 上は作った見本です。「承久の乱・後鳥羽上皇・六波羅探題」がバラバラの語句じゃなく、1つの話としてつながるのがポイント。</p>
+  </div>
+
+  <!-- 5 -->
+  <h2><span class="num">5</span>受験までの見通し</h2>
+  <div class="card">
+    <div class="road">
+      <div class="st now">
+        <div class="when">今 〜 高2の3月（いまここ）</div>
+        <h3>毎日の予習・復習を習慣にする</h3>
+        <p class="sub" style="margin:0">学校の授業と定期テストで基礎を固める時期。英単語と日本史の語句は、毎日少しずつ。</p>
+      </div>
+      <div class="st">
+        <div class="when">高3の春 〜 夏</div>
+        <h3>高1・高2の総復習</h3>
+        <p class="sub" style="margin:0">たまったカードが、そのまま総復習の材料になる。苦手をつぶす時期。</p>
+      </div>
+      <div class="st">
+        <div class="when">高3の秋 〜</div>
+        <h3>過去問・共通テスト対策</h3>
+        <p class="sub" style="margin:0">志望校に合わせた練習。</p>
+      </div>
+    </div>
+    <p class="sub" style="margin:14px 0 0">これはふつうの目安です。文系・理系や志望校で変わるので、最後の質問で教えてね。</p>
+  </div>
+
+  <!-- 6 -->
+  <h2><span class="num">6</span>どのAIを使えばいい？</h2>
+  <p>どれも <b>無料</b> で使えます。<b>まずは1つだけ</b>でOK。もう使っているAIがあれば、それでも大丈夫。</p>
+  <div class="stack">
+    <div class="card tool rec">
+      <span class="tag">いちばんおすすめ</span>
+      <h3 style="margin-top:8px">ChatGPT（チャットジーピーティー）</h3>
+      <ul>
+        <li>教科書の写真を読み取るのが得意</li>
+        <li>予習用の「ルール」を覚えさせておける（アプリと連動）</li>
+        <li>App Store で「ChatGPT」と検索。作っている会社は <b>OpenAI</b></li>
+        <li><b>18歳未満は保護者のOKが必要</b></li>
+      </ul>
+    </div>
+    <div class="card tool">
+      <span class="tag">こちらもOK</span>
+      <h3 style="margin-top:8px">Gemini（ジェミニ）</h3>
+      <ul>
+        <li>Google のAI。Googleアカウントがあればすぐ始められる</li>
+      </ul>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:12px">無料の場合、写真を送れる回数に1日の上限があるよ（数回ほど）。文字が中心のページは、iPhoneのカメラの「文字読み取り」でコピーして送れば回数を節約できる。</p>
+
+  <!-- 7 -->
+  <h2><span class="num">7</span>守ってほしい3つのルール</h2>
+  <div class="card">
+    <ol class="steps rules">
+      <li><b>答えを丸写ししない。</b>まずヒント、答え合わせは最後。</li>
+      <li><b>AIもまちがえる。</b>特に年号や人名は、教科書で確かめる。</li>
+      <li><b>個人情報は送らない。</b>名前・住所・学校名などはAIに送らない。</li>
+    </ol>
+  </div>
+
+  <!-- 8 -->
+  <h2><span class="num">8</span>明日の日本史で1回だけ試してみる</h2>
+  <div class="card">
+    <ol class="steps">
+      <li>明日やる日本史の教科書のページを撮る</li>
+      <li>下の「お願い文をコピー」を押す</li>
+      <li>AIアプリを開いて、写真を付けて、お願い文を貼って送る</li>
+      <li>一問一答を自分で解いてから「答え合わせ」と送る</li>
+    </ol>
+    <p style="margin-top:12px"><b>お願い文</b></p>
+    <pre class="prompt" id="prompt">あなたは高校2年生向けの日本史の先生です。
+写真は、明日の授業で習う教科書のページです。予習を手伝ってください。
+
+1. このページの流れを「原因→出来事→結果」の順に、短いストーリーで説明してください。
+2. 大事な語句を10個選んで、一問一答の問題にしてください。答えはまだ出さないでください。
+3. 覚えにくい年号があれば、語呂合わせを1つ作ってください。
+
+私が「答え合わせ」と送ったら、一問一答の答えを出してください。</pre>
+    <button class="btn" id="btn-copy">お願い文をコピー</button>
+  </div>
+  <p class="sub" style="margin-top:12px">アプリを使うとどんな感じになるかは、<a href="https://kuutamasama.github.io/yoshu-sakutto/demo.html">今ある予習アプリの「使ってみた例」</a>で見られるよ。これに、あなた用の機能（復習クイズ・音声・今日やること）を足していきます。</p>
+
+  <!-- 9 -->
+  <h2><span class="num">9</span>最後に教えて</h2>
+  <p>これをもとに、あなた用のアプリを作ります。わかる範囲でOK。</p>
+  <div class="card">
+    <div class="q" style="margin-top:0">
+      <b>どう思った？</b>
+      <div class="choices" data-q="feel" data-single>
+        <button class="choice" data-v="やってみたい！">😆 やってみたい！</button>
+        <button class="choice" data-v="ちょっと気になる">🤔 ちょっと気になる</button>
+        <button class="choice" data-v="うーん、微妙かも">😐 うーん、微妙かも</button>
+      </div>
+    </div>
+    <div class="q">
+      <b>いちばん困っている教科は？</b>
+      <small>1つだけ選んでね</small>
+      <div class="opts" data-q="worst" data-single>
+        <button class="opt" data-v="英語">英語</button>
+        <button class="opt" data-v="数学">数学</button>
+        <button class="opt" data-v="国語">国語</button>
+        <button class="opt" data-v="社会">社会</button>
+        <button class="opt" data-v="理科">理科</button>
+      </div>
+    </div>
+    <div class="q">
+      <b>社会・理科でとっている科目は？</b>
+      <small>いくつでも選べるよ</small>
+      <div class="opts" data-q="subjects">
+        <button class="opt" data-v="日本史">日本史</button>
+        <button class="opt" data-v="世界史">世界史</button>
+        <button class="opt" data-v="地理">地理</button>
+        <button class="opt" data-v="公共・倫理・政経">公共・倫理・政経</button>
+        <button class="opt" data-v="物理">物理</button>
+        <button class="opt" data-v="化学">化学</button>
+        <button class="opt" data-v="生物">生物</button>
+        <button class="opt" data-v="地学">地学</button>
+      </div>
+    </div>
+    <div class="q">
+      <b>文系？理系？</b>
+      <div class="opts" data-q="track" data-single>
+        <button class="opt" data-v="文系">文系</button>
+        <button class="opt" data-v="理系">理系</button>
+        <button class="opt" data-v="まだ決めていない">まだ決めていない</button>
+      </div>
+    </div>
+    <div class="q">
+      <b>考えている大学は？</b>
+      <div class="opts" data-q="univ" data-single>
+        <button class="opt" data-v="国公立">国公立</button>
+        <button class="opt" data-v="私立">私立</button>
+        <button class="opt" data-v="まだ決めていない">まだ決めていない</button>
+      </div>
+    </div>
+    <div class="q">
+      <b>ひとこと（なくてもOK）</b>
+      <textarea id="comment" maxlength="200" placeholder="例：日本史は流れで覚えるのがよさそう／英単語もやりたい"></textarea>
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <button class="btn line" id="btn-line">LINEで返事を送る</button>
+  </div>
+
+  <footer>ムリしすぎず、少しずつ。いっしょにラクにしていこう。</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const picked = {};
+
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+function copyText(text) {
+  // タップの直後に同期的にコピーする（iPhoneでも確実に動くように）
+  let ok = false;
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  ta.remove();
+  if (!ok && navigator.clipboard) { navigator.clipboard.writeText(text).catch(() => {}); ok = true; }
+  return ok;
+}
+
+$("btn-copy").addEventListener("click", () => {
+  const ok = copyText($("prompt").textContent);
+  showToast(ok ? "コピーしました。AIアプリに貼りつけてね" : "コピーできませんでした。文を長押ししてコピーしてね");
+});
+
+// 選択肢（data-single は1つだけ、それ以外は複数選べる）
+document.querySelectorAll("[data-q]").forEach(group => {
+  const key = group.dataset.q;
+  const single = group.hasAttribute("data-single");
+  picked[key] = [];
+  group.addEventListener("click", e => {
+    const b = e.target.closest("button[data-v]");
+    if (!b) return;
+    const v = b.dataset.v;
+    if (single) {
+      picked[key] = picked[key][0] === v ? [] : [v];
+    } else {
+      picked[key] = picked[key].includes(v) ? picked[key].filter(x => x !== v) : picked[key].concat(v);
+    }
+    group.querySelectorAll("button[data-v]").forEach(x => x.classList.toggle("on", picked[key].includes(x.dataset.v)));
+  });
+});
+
+$("btn-line").addEventListener("click", () => {
+  if (!picked.feel.length) {
+    showToast("「どう思った？」を1つ選んでね");
+    document.querySelector('[data-q="feel"]').scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  const show = k => picked[k].length ? picked[k].join("、") : "（未回答）";
+  const comment = $("comment").value.trim();
+  const text = [
+    "【予習と暗記の作戦 感想】",
+    `気持ち：${show("feel")}`,
+    `いちばん困っている教科：${show("worst")}`,
+    `社会・理科の科目：${show("subjects")}`,
+    `文系・理系：${show("track")}`,
+    `考えている大学：${show("univ")}`,
+    `ひとこと：${comment || "（なし）"}`,
+  ].join("\n");
+  copyText(text);
+  location.href = "https://line.me/R/share?text=" + encodeURIComponent(text);
+});
+</script>
+</body>
+</html>
